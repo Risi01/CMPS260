@@ -1,1 +1,217 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 1 Programming Assignment</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// Setting up the environment
+
+console.log("Setting up the environment");
+document.body.textContent = "See Console!";
+
+// JavaScript basics
+
+console.log("JavaScript basics");
+
+// Static vs Dynamic Typing explanation
+// Static typing: variable types are fixed at compile time (e.g., Java, C++)
+// Dynamic typing: variable types are determined at runtime (e.g., JavaScript, Python)
+
+// Define and print variable
+let greeting = "Hello World!";
+console.log(greeting);
+alert(greeting);
+
+// Variable scope example
+var myVariable = "global";
+var myOtherVariable = "global";
+
+function myFunction() {
+  var myVariable = "local";
+  return myVariable;
+}
+
+function myOtherFunction() {
+  myOtherVariable = "local";
+  return myOtherVariable;
+}
+
+console.log(myVariable); // global
+console.log(myFunction()); // local
+console.log(myOtherVariable); // global
+console.log(myOtherFunction()); // local
+console.log(myOtherVariable); // local (because reassigned globally)
+
+// & operator explanation
+// Bitwise AND: Compares bits and returns 1 if both bits are 1.
+console.log(10 & 5); // 0
+console.log(10 & 6); // 2
+
+// == vs === explanation
+// == checks value only, === checks value and type
+console.log(5 == '5'); // true
+console.log(5 === '5'); // false
+
+// Control structures 
+
+console.log("Control structures");
+
+var year = 2016;
+if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) {
+  console.log(year + " is a leap year");
+} else {
+  console.log(year + " is not a leap year");
+}
+
+// Factorial loop
+var n = 10;
+var factorial = 1;
+for (let i = 1; i <= n; i++) {
+  factorial *= i;
+}
+console.log("The factorial of " + n + " is " + factorial);
+
+// Functions
+
+console.log("Functions");
+
+function checkForNumber(arr, num) {
+  return arr[0] === num || arr[arr.length - 1] === num;
+}
+
+console.log(checkForNumber([4, 2, 5, 3], 4) === true);
+console.log(checkForNumber([4, 2, 5, 3], 3) === true);
+console.log(checkForNumber([4, 2, 5, 3], 2) === false);
+console.log(checkForNumber([4, 2, 5, 3], 13) === false);
+
+// Object-oriented programming in JavaScript
+
+console.log("Object-oriented programming in JavaScript");
+
+function Triangle(side) {
+  this.side = side;
+}
+
+Triangle.prototype.getCircumference = function() {
+  return 3 * this.side;
+};
+
+Triangle.prototype.getArea = function() {
+  // Using formula for equilateral triangle: (sqrt(3)/4) * a^2
+  return (Math.sqrt(3) / 4) * this.side * this.side;
+};
+
+var triangle = new Triangle(5);
+console.log("The circumference for the triangle is " + triangle.getCircumference());
+console.log("The area for the triangle is " + triangle.getArea());
+
+// Why should we use arrays? //
+
+console.log("Why should we use arrays?");
+
+// Temperatures stored individually
+var day1 = 70, day2 = 72, day3 = 68, day4 = 75, day5 = 74;
+var avg1 = (day1 + day2 + day3 + day4 + day5) / 5;
+console.log("Average temperature (no array): " + avg1);
+
+// Using array
+var temps = [70, 72, 68, 75, 74];
+var sum = 0;
+for (let t of temps) sum += t;
+console.log("Average temperature (array): " + sum / temps.length);
+// Easier to update using arrays
+
+// Creating and initializing arrays
+
+console.log("Creating and initializing arrays");
+
+var daysOfWeek1 = new Array();
+var daysOfWeek2 = new Array(7);
+var daysOfWeek3 = new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+var daysOfWeek4 = [];
+var daysOfWeek5 = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+console.log(daysOfWeek1.length, daysOfWeek2.length, daysOfWeek3.length, daysOfWeek4.length, daysOfWeek5.length);
+
+// Creating arrays with specific numbers
+var only7 = [7];
+var sevenEight = [7, 8];
+console.log(only7, sevenEight);
+
+// Prefer [] for simplicity
+
+// Fibonacci sequence
+var fib = [0, 1];
+for (let i = 2; i < 25; i++) {
+  fib[i] = fib[i - 1] + fib[i - 2];
+}
+console.log(fib);
+
+// Adding elements
+
+console.log("Adding elements");
+
+var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+arr.push(10);
+arr.unshift(0);
+console.log(arr);
+console.log("New length: " + arr.length);
+
+// Removing elements
+
+console.log("Removing elements");
+arr.pop();
+arr.shift();
+console.log(arr);
+
+// Adding and removing elements from a specific position
+
+console.log("Adding and removing elements from a specific position");
+var removed = arr.slice(1, arr.length - 1);
+arr = [arr[0], arr[arr.length - 1]];
+console.log("After removing middle elements:", arr);
+arr.splice(1, 0, ...removed);
+console.log("After re-inserting elements:", arr);
+
+// Two-dimensional and multidimensional arrays 
+
+console.log("Two-dimensional and multidimensional arrays");
+
+var matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+var total = 0;
+for (let row of matrix) {
+  for (let value of row) {
+    total += value;
+  }
+}
+console.log("Sum of all elements:", total);
+
+// References for JavaScript array methods 
+
+console.log("References for JavaScript array methods");
+
+var zero = 0;
+var positiveNumbers = [1, 2, 3];
+var negativeNumbers = [-3, -2, -1];
+
+var numbers = negativeNumbers.concat(zero, positiveNumbers);
+console.log(numbers);
+
+console.log(numbers.every(num => num < 10));
+
+var nonnegative = numbers.filter(num => num >= 0);
+console.log(nonnegative);
+
+var squared = numbers.map(num => num ** 2);
+console.log(squared);
+
+console.log("All sections completed successfully.");
+</script>
+</head>
+<body>
+  See Console!
+</body>
+</html>
 
