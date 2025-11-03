@@ -1,1 +1,171 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 2 Programming Assignment</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// The stack data structure 
+
+console.log("The stack data structure");
+
+function Stack() {
+  var items = [];
+  this.push = function(element) { items.push(element); };
+  this.pop = function() { return items.pop(); };
+  this.peek = function() { return items[items.length - 1]; };
+  this.isEmpty = function() { return items.length === 0; };
+  this.size = function() { return items.length; };
+  this.clear = function() { items = []; };
+  this.print = function() { console.log(items.join(", ")); };
+}
+
+// Test Stack
+(function testStack(){
+  var s = new Stack();
+  console.log("Stack empty?", s.isEmpty() === true);
+  s.push(5); s.push(8); s.push(11);
+  console.log("Stack size==3?", s.size() === 3);
+  console.log("Stack peek==11?", s.peek() === 11);
+  console.log("Pop==11?", s.pop() === 11);
+  console.log("After pop, peek==8?", s.peek() === 8);
+  s.print();
+})();
+
+// Solving problems using stacks 
+
+console.log("Solving problems using stacks");
+
+function printRemaindersDiv2(n) {
+  n = Math.floor(Number(n));
+  if (!isFinite(n) || n < 0) { console.log("Please enter a nonnegative integer."); return; }
+  console.log("Remainders for", n);
+  while (n > 0) {
+    console.log(n % 2);
+    n = Math.floor(n / 2);
+  }
+}
+var userInput = (typeof prompt === "function") ? prompt("Enter a nonnegative integer:") : "13";
+printRemaindersDiv2(userInput);
+
+function decimalToBinary(n) {
+  n = Math.floor(Number(n));
+  if (!isFinite(n) || n < 0) return null;
+  if (n === 0) return "0";
+  var stack = new Stack();
+  while (n > 0) {
+    stack.push(n % 2);
+    n = Math.floor(n / 2);
+  }
+  var bin = "";
+  while (!stack.isEmpty()) bin += stack.pop();
+  return bin;
+}
+console.log("decimalToBinary(0) =", decimalToBinary(0));
+console.log("decimalToBinary(5) =", decimalToBinary(5), "expected 101");
+console.log("decimalToBinary(13) =", decimalToBinary(13), "expected 1101");
+
+// The queue data structure 
+
+console.log("The queue data structure");
+
+function Queue() {
+  var items = [];
+  this.enqueue = function(element) { items.push(element); };
+  this.dequeue = function() { return items.shift(); };
+  this.front = function() { return items[0]; };
+  this.isEmpty = function() { return items.length === 0; };
+  this.size = function() { return items.length; };
+  this.clear = function() { items = []; };
+  this.print = function() { console.log(items.join(", ")); };
+}
+
+// Test Queue
+(function testQueue(){
+  var q = new Queue();
+  console.log("Queue empty?", q.isEmpty() === true);
+  q.enqueue("A"); q.enqueue("B"); q.enqueue("C");
+  console.log("Front==A?", q.front() === "A");
+  console.log("Dequeue==A?", q.dequeue() === "A");
+  console.log("Front now==B?", q.front() === "B");
+  q.print();
+})();
+
+// The priority queue 
+
+console.log("The priority queue");
+
+function QueueElement(element, priority) {
+  this.element = element;
+  this.priority = priority;
+}
+
+function PriorityQueue() {
+  var items = [];
+  this.enqueue = function(element, priority) {
+    var qe = new QueueElement(element, priority);
+    if (items.length === 0) { items.push(qe); return; }
+    var inserted = false;
+    for (var i = 0; i < items.length; i++) {
+      if (qe.priority < items[i].priority) {
+        items.splice(i, 0, qe);
+        inserted = true;
+        break;
+      }
+    }
+    if (!inserted) items.push(qe);
+  };
+  this.dequeue = function() { return items.shift(); };
+  this.front = function() { return items[0]; };
+  this.isEmpty = function() { return items.length === 0; };
+  this.size = function() { return items.length; };
+  this.clear = function() { items = []; };
+  this.print = function() {
+    for (var i = 0; i < items.length; i++) {
+      console.log(items[i].element + " - " + items[i].priority);
+    }
+  };
+}
+
+// Test PriorityQueue
+(function testPriorityQueue(){
+  var pq = new PriorityQueue();
+  pq.enqueue("task-low", 5);
+  pq.enqueue("task-urgent", 1);
+  pq.enqueue("task-medium", 3);
+  pq.print();
+  console.log("Front is urgent?", pq.front().element === "task-urgent");
+  console.log("Dequeue urgent?", pq.dequeue().element === "task-urgent");
+  console.log("Next is medium?", pq.front().element === "task-medium");
+})();
+
+// The circular queue - Hot Potato 
+
+console.log("The circular queue - Hot Potato");
+
+function hotPotato(nameList, num) {
+  var queue = new Queue();
+  for (var i = 0; i < nameList.length; i++) queue.enqueue(nameList[i]);
+  var eliminated = [];
+  while (queue.size() > 1) {
+    for (var count = 0; count < num; count++) queue.enqueue(queue.dequeue());
+    eliminated.push(queue.dequeue());
+  }
+  return { winner: queue.dequeue(), eliminated: eliminated };
+}
+
+// Test hotPotato
+(function testHotPotato(){
+  var names = ["Bill","John","Jack","Camila","Ingrid","Carl"];
+  var result = hotPotato(names, 7);
+  console.log("Eliminated order:", result.eliminated.join(", "));
+  console.log("Winner:", result.winner);
+})();
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
 
