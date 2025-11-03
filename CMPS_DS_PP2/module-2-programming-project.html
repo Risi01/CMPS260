@@ -1,1 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 2 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+console.log("Project");
+
+// 1) Stack (prototype approach)
+function Stack() { this._items = []; }
+Stack.prototype.push = function (el) { this._items.push(el); };
+Stack.prototype.pop = function () { return this._items.pop(); };
+Stack.prototype.peek = function () { return this._items[this._items.length - 1]; };
+Stack.prototype.isEmpty = function () { return this._items.length === 0; };
+Stack.prototype.size = function () { return this._items.length; };
+Stack.prototype.clear = function () { this._items = []; };
+Stack.prototype.print = function () { console.log(this._items.join(", ")); };
+
+// 2) Parentheses balance check using a Stack
+function isBalanced(str) {
+  var s = new Stack();
+  for (var i = 0; i < str.length; i++) {
+    var ch = str[i];
+    if (ch === '(') s.push(ch);
+    else if (ch === ')') {
+      if (s.isEmpty()) return false; // closing before opening
+      s.pop();
+    }
+  }
+  return s.isEmpty();
+}
+
+// 3) Simple tests
+console.log("isBalanced tests (should all be true):");
+console.log(isBalanced("((()))") === true);
+console.log(isBalanced("()(())") === true);
+console.log(isBalanced("(()") === false);
+console.log(isBalanced("())(") === false);
+
+// Quick stack sanity check
+(function(){
+  var st = new Stack();
+  st.push(1); st.push(2); st.push(3);
+  console.log("peek==3?", st.peek() === 3);
+  console.log("pop==3?", st.pop() === 3);
+  console.log("size==2?", st.size() === 2);
+})();
+
+// 4) Queue (prototype approach)
+function Queue() { this._items = []; }
+Queue.prototype.enqueue = function (el) { this._items.push(el); };
+Queue.prototype.dequeue = function () { return this._items.shift(); };
+Queue.prototype.front   = function () { return this._items[0]; };
+Queue.prototype.isEmpty = function () { return this._items.length === 0; };
+Queue.prototype.size    = function () { return this._items.length; };
+Queue.prototype.clear   = function () { this._items = []; };
+Queue.prototype.print   = function () {
+  console.log(this._items.map(function(x){ return (x && x.toString) ? x.toString() : String(x); }).join(", "));
+};
+
+// 5) Edible queue with ≥3 fruits and ≥3 vegetables
+function Edible(name, isFruit) {
+  this.name = name;
+  this.isFruit = isFruit; // if not fruit, it must be a vegetable
+}
+Edible.prototype.toString = function() {
+  return "Edible: " + this.name + " Fruit: " + this.isFruit;
+};
+
+var edibleQueue = new Queue();
+edibleQueue.enqueue(new Edible("apple", true));
+edibleQueue.enqueue(new Edible("banana", true));
+edibleQueue.enqueue(new Edible("orange", true));
+edibleQueue.enqueue(new Edible("carrot", false));
+edibleQueue.enqueue(new Edible("broccoli", false));
+edibleQueue.enqueue(new Edible("spinach", false));
+
+console.log("Initial edibleQueue:");
+edibleQueue.print();
+
+// 6) Create two more queues: fruits & vegetables (empty)
+var fruitQueue = new Queue();
+var vegetableQueue = new Queue();
+
+// 7) Dequeue from edibles and route into the right queue
+while (!edibleQueue.isEmpty()) {
+  var item = edibleQueue.dequeue();
+  if (item.isFruit) fruitQueue.enqueue(item);
+  else vegetableQueue.enqueue(item);
+}
+
+// 8) Print final results
+console.log("Fruits:");
+fruitQueue.print();
+console.log("Vegetables:");
+vegetableQueue.print();
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
 
