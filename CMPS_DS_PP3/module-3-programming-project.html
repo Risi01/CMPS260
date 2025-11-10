@@ -1,1 +1,142 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 3 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// Project //
+
+console.log("Project");
+
+// 1) Linked list (PROTOTYPE APPROACH)
+function LinkedList() {
+  this._head = null;          // first node
+  // NOTE on size(): because lists may SHARE nodes (appendNode), keeping a simple
+  // counter becomes unreliable. We'll compute size by traversing each time.
+}
+function Node(element) {
+  this.element = element;     // stores a Landmark or any value
+  this.next = null;
+}
+
+// append(element) — append an element (creates a new node)
+LinkedList.prototype.append = function (element) {
+  var node = new Node(element);
+  if (!this._head) { this._head = node; return; }
+  var current = this._head;
+  while (current.next) current = current.next;
+  current.next = node;
+};
+
+// getNodeAt(position) — return the NODE at zero-based position (not the element)
+LinkedList.prototype.getNodeAt = function (position) {
+  if (position < 0) return null;
+  var index = 0, current = this._head;
+  while (current && index < position) {
+    current = current.next;
+    index++;
+  }
+  return current || null;
+};
+
+// appendNode(node) — append an EXISTING NODE (shares the tail)
+LinkedList.prototype.appendNode = function (node) {
+  if (!node) return;
+  if (!this._head) { this._head = node; return; }
+  var current = this._head;
+  while (current.next) current = current.next;
+  current.next = node;   // IMPORTANT: we link to the SAME node (shared tail)
+};
+
+// size() — compute by traversal (robust when lists share nodes)
+LinkedList.prototype.size = function () {
+  var count = 0, current = this._head;
+  while (current) { count++; current = current.next; }
+  return count;
+};
+
+// toString/print — show names if elements are Landmarks
+LinkedList.prototype.toString = function () {
+  var out = "List: ", cur = this._head;
+  while (cur) {
+    var name = cur.element && cur.element.name ? cur.element.name : String(cur.element);
+    out += name + (cur.next ? " -> " : "");
+    cur = cur.next;
+  }
+  return out;
+};
+LinkedList.prototype.print = function () { console.log(this.toString()); };
+
+
+// 2) Landmarks and three lists with SHARED tails
+function Landmark(name) { this.name = name; }
+
+var a1 = new Landmark("A1");
+var a2 = new Landmark("A2");
+var a3 = new Landmark("A3");
+var a4 = new Landmark("A4");
+var b  = new Landmark("B");
+var c  = new Landmark("C");
+var d  = new Landmark("D");
+var e  = new Landmark("E");
+
+var list1 = new LinkedList();
+var list2 = new LinkedList();
+var list3 = new LinkedList();
+
+// Directions to build (goal):
+// 1) A1 -> B -> C -> D -> E
+// 2) A2 -> B -> C -> D -> E            (shares tail starting at B with list1)
+// 3) A3 -> A4 -> C -> D -> E           (shares tail starting at C with list1)
+
+// Step 1: store landmarks for (1) in list1 using append
+list1.append(a1);
+list1.append(b);
+list1.append(c);
+list1.append(d);
+list1.append(e);
+
+// Step 2: store landmarks for (2) in list2, but only include A2 for now
+list2.append(a2);
+
+// Step 3: getNodeAt(position) implemented above (returns NODE, not element)
+
+// Step 4: appendNode(node) implemented above (links to existing node/tail)
+
+// Step 5: link B..E from list1 onto list2 (so list2 becomes A2 -> B -> C -> D -> E)
+var nodeB = list1.getNodeAt(1); // node containing B
+list2.appendNode(nodeB);
+
+// Show lists 1 & 2
+console.log("After linking list2 to B..E from list1:");
+list1.print(); // A1 -> B -> C -> D -> E
+list2.print(); // A2 -> B -> C -> D -> E
+
+// Step 6: build list3 as A3 -> A4 -> (C..E shared with list1)
+list3.append(a3);
+list3.append(a4);
+var nodeC = list1.getNodeAt(2); // node containing C
+list3.appendNode(nodeC);
+
+console.log("After linking list3 to C..E from list1:");
+list3.print(); // A3 -> A4 -> C -> D -> E
+
+// Step 7: What's the problem with size()?
+// If we kept a simple length counter and called appendNode(node), we might (a)
+// not update length correctly (node may include C->D->E chain), or (b) double-
+// count shared nodes across lists. FIX: compute size by traversing from head.
+// Our size() above does exactly that; it's always correct for each list.
+console.log("Sizes (traversal-based):");
+console.log("list1.size() =", list1.size()); // 5
+console.log("list2.size() =", list2.size()); // 5
+console.log("list3.size() =", list3.size()); // 5
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
 
