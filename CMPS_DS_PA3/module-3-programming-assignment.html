@@ -1,1 +1,168 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 3 Programming Assignment</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// The linked list data structure //
+console.log("The linked list data structure");
+
+// Q: Array(1000) vs LinkedList(1000): get last element — which is faster?
+// A: Array is O(1), LinkedList is O(n). An array is faster for retrieving the last element.
+
+// Creating a linked list //
+
+function LinkedList() {
+
+  function Node(element) {
+    this.element = element;
+    this.next = null;
+  }
+
+  var length = 0;
+  var head = null;
+
+  // append(element)
+  this.append = function(element) {
+    var node = new Node(element);
+    if (head === null) {
+      head = node;
+    } else {
+      var current = head;
+      while (current.next !== null) {
+        current = current.next;
+      }
+      current.next = node;
+    }
+    length++;
+  };
+
+  // insert(position, element)
+  this.insert = function(position, element) {
+    if (position < 0 || position > length) return false;
+    var node = new Node(element);
+    if (position === 0) {
+      node.next = head;
+      head = node;
+    } else {
+      var index = 0;
+      var current = head;
+      var previous = null;
+      while (index < position) {
+        previous = current;
+        current = current.next;
+        index++;
+      }
+      node.next = current;
+      previous.next = node;
+    }
+    length++;
+    return true;
+  };
+
+  // removeAt(position)
+  this.removeAt = function(position) {
+    if (position < 0 || position >= length) return null;
+    var current = head;
+    var previous = null;
+    var index = 0;
+
+    if (position === 0) {
+      head = head.next;
+    } else {
+      while (index < position) {
+        previous = current;
+        current = current.next;
+        index++;
+      }
+      previous.next = current.next;
+    }
+    length--;
+    return current.element;
+  };
+
+  // remove(element)
+  this.remove = function(element) {
+    var index = this.indexOf(element);
+    if (index === -1) return null;
+    return this.removeAt(index);
+  };
+
+  // indexOf(element)
+  this.indexOf = function(element) {
+    var current = head;
+    var index = 0;
+    while (current) {
+      if (current.element === element) return index;
+      current = current.next;
+      index++;
+    }
+    return -1;
+  };
+
+  this.isEmpty = function() { return length === 0; };
+  this.size    = function() { return length; };
+  this.getHead = function() { return head; };
+
+  this.toString = function() {
+    var current = head;
+    var str = "List: ";
+    while (current) {
+      str += current.element + (current.next ? " -> " : "");
+      current = current.next;
+    }
+    return str;
+  };
+
+  this.print = function() {
+    console.log(this.toString());
+  };
+}
+
+
+// Testing all required functions //
+
+var list = new LinkedList();
+
+console.log("--- Testing append ---");
+list.append("A");
+list.append("B");
+list.append("C");
+list.print();                // A -> B -> C
+
+console.log("--- Testing insert ---");
+list.insert(0, "Start");
+list.insert(2, "Middle");
+list.insert(list.size(), "Z");
+list.print();                // Start -> A -> Middle -> B -> C -> Z
+
+console.log("--- Testing removeAt ---");
+console.log(list.removeAt(0));               // removes Start
+console.log(list.removeAt(2));               // removes B
+console.log(list.removeAt(list.size()-1));   // removes Z
+list.print();                                // A -> Middle -> C
+
+console.log("--- Testing remove(element) ---");
+console.log(list.remove("Middle"));          // removes Middle
+console.log(list.remove("X"));               // null (not found)
+list.print();                                // A -> C
+
+console.log("--- Testing indexOf ---");
+console.log(list.indexOf("A"));              // 0
+console.log(list.indexOf("C"));              // 1
+console.log(list.indexOf("Z"));              // -1
+
+console.log("--- Testing isEmpty / size / getHead ---");
+console.log(list.isEmpty());                 // false
+console.log(list.size());                    // 2
+console.log(list.getHead().element);         // A
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
 
