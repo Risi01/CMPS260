@@ -1,1 +1,333 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 4 Programming Assignment</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// Creating a set //
+
+console.log("Creating a set");
+
+function Set() {
+  var items = {};
+
+  this.add = function(value) {
+    if (!this.has(value)) {
+      items[value] = value;
+      return true;
+    }
+    return false;
+  };
+
+  this.delete = function(value) {
+    if (this.has(value)) {
+      delete items[value];
+      return true;
+    }
+    return false;
+  };
+
+  this.has = function(value) {
+    return items.hasOwnProperty(value);
+  };
+
+  this.clear = function() {
+    items = {};
+  };
+
+  this.size = function() {
+    return Object.keys(items).length;
+  };
+
+  this.values = function() {
+    return Object.keys(items);
+  };
+
+  // ---- Set operations ----
+  this.union = function(otherSet) {
+    let unionSet = new Set();
+    this.values().forEach(v => unionSet.add(v));
+    otherSet.values().forEach(v => unionSet.add(v));
+    return unionSet;
+  };
+
+  this.intersection = function(otherSet) {
+    let inter = new Set();
+    this.values().forEach(v => {
+      if (otherSet.has(v)) inter.add(v);
+    });
+    return inter;
+  };
+
+  this.difference = function(otherSet) {
+    let diff = new Set();
+    this.values().forEach(v => {
+      if (!otherSet.has(v)) diff.add(v);
+    });
+    return diff;
+  };
+
+  this.subset = function(otherSet) {
+    return this.values().every(v => otherSet.has(v));
+  };
+}
+
+// ---- Set Tests ----
+console.log("Set operations — test");
+let A = new Set();
+A.add("1"); A.add("2"); A.add("3");
+
+let B = new Set();
+B.add("3"); B.add("4");
+
+console.log("A union B:", A.union(B).values());
+console.log("A intersect B:", A.intersection(B).values());
+console.log("A diff B:", A.difference(B).values());
+console.log("A subset B?", A.subset(B));
+console.log("B subset A?", B.subset(A));
+
+
+// Dictionaries //
+
+console.log("Dictionaries");
+
+function Dictionary() {
+  var items = {};
+
+  this.set = function(key, value) {
+    items[key] = value;
+  };
+
+  this.delete = function(key) {
+    if (this.has(key)) {
+      delete items[key];
+      return true;
+    }
+    return false;
+  };
+
+  this.has = function(key) {
+    return items.hasOwnProperty(key);
+  };
+
+  this.get = function(key) {
+    return this.has(key) ? items[key] : undefined;
+  };
+
+  this.clear = function() {
+    items = {};
+  };
+
+  this.size = function() {
+    return Object.keys(items).length;
+  };
+
+  this.keys = function() {
+    return Object.keys(items);
+  };
+
+  this.values = function() {
+    return Object.values(items);
+  };
+
+  this.getItems = function() {
+    return items;
+  };
+}
+
+console.log("Dictionary tests");
+let dict = new Dictionary();
+dict.set("name", "Maurice");
+dict.set("class", "CMPS260");
+console.log("Keys:", dict.keys());
+console.log("Values:", dict.values());
+console.log("Has name?", dict.has("name"));
+console.log("Get class:", dict.get("class"));
+dict.delete("class");
+console.log("After delete:", dict.keys());
+
+
+// The hash table //
+
+console.log("The hash table");
+
+function ValuePair(key, value) {
+  this.key = key;
+  this.value = value;
+  this.toString = function() {
+    return "[" + this.key + " - " + this.value + "]";
+  };
+}
+
+function Node(element) {
+  this.element = element;
+  this.next = null;
+}
+
+function LinkedList() {
+  this.length = 0;
+  this.head = null;
+}
+
+LinkedList.prototype.append = function(element) {
+  var node = new Node(element);
+  if (this.head === null) {
+    this.head = node;
+  } else {
+    var tmp = this.head;
+    while (tmp.next !== null) {
+      tmp = tmp.next;
+    }
+    tmp.next = node;
+  }
+  this.length++;
+};
+
+LinkedList.prototype.insert = function(position, element) {
+  var node = new Node(element);
+  if (position === 0) {
+    var oldHead = this.head;
+    this.head = node;
+    this.head.next = oldHead;
+  } else {
+    var tmp = this.head;
+    for (var i = 0; i < position - 1; i++) {
+      tmp = tmp.next;
+    }
+    node.next = tmp.next;
+    tmp.next = node;
+  }
+  this.length++;
+};
+
+LinkedList.prototype.removeAt = function(position) {
+  var element = null;
+  if (position === 0) {
+    element = this.head.element;
+    this.head = this.head.next;
+  } else {
+    var tmp = this.head;
+    for (var i = 0; i < position - 1; i++) {
+      tmp = tmp.next;
+    }
+    element = tmp.next.element;
+    tmp.next = tmp.next.next;
+  }
+  this.length--;
+  return element;
+};
+
+LinkedList.prototype.indexOf = function(element) {
+  var tmp = this.head;
+  for (var i = 0; i < this.length; i++) {
+    if (tmp.element === element) return i;
+    tmp = tmp.next;
+  }
+  return -1;
+};
+
+LinkedList.prototype.size = function() {
+  return this.length;
+};
+
+LinkedList.prototype.getHead = function() {
+  return this.head;
+};
+
+LinkedList.prototype.toString = function() {
+  var current = this.head;
+  var string = "List: ";
+  while (current) {
+    string += current.element + (current.next ? " -> " : "");
+    current = current.next;
+  }
+  return string;
+};
+
+
+// ----- Hash Table with Separate Chaining -----
+function HashTable() {
+  var table = [];
+
+  function loseloseHashCode(key) {
+    var hash = 0;
+    for (var i = 0; i < key.length; i++) {
+      hash += key.charCodeAt(i);
+    }
+    return hash % 37;
+  }
+
+  this.put = function(key, value) {
+    var position = loseloseHashCode(key);
+    if (table[position] === undefined) {
+      table[position] = new LinkedList();
+    }
+    table[position].append(new ValuePair(key, value));
+  };
+
+  this.get = function(key) {
+    var position = loseloseHashCode(key);
+    var list = table[position];
+
+    if (list !== undefined) {
+      var current = list.getHead();
+      while (current) {
+        if (current.element.key === key) {
+          return current.element.value;
+        }
+        current = current.next;
+      }
+    }
+    return undefined;
+  };
+
+  this.remove = function(key) {
+    var position = loseloseHashCode(key);
+    var list = table[position];
+
+    if (list !== undefined) {
+      var current = list.getHead();
+      let index = 0;
+      while (current) {
+        if (current.element.key === key) {
+          list.removeAt(index);
+          if (list.size() === 0) delete table[position];
+          return true;
+        }
+        index++;
+        current = current.next;
+      }
+    }
+    return false;
+  };
+
+  this.print = function() {
+    for (var i = 0; i < table.length; i++) {
+      if (table[i] !== undefined) {
+        console.log(i + ": " + table[i].toString());
+      }
+    }
+  };
+}
+
+// ---- Hash Table Tests ----
+console.log("HashTable tests");
+let ht = new HashTable();
+ht.put("name", "Maurice");
+ht.put("class", "CMPS260");
+ht.put("module", "Module 4");
+ht.print();
+
+console.log("Get name:", ht.get("name"));
+console.log("Remove class:", ht.remove("class"));
+ht.print();
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
 
