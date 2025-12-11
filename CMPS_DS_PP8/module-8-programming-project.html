@@ -1,1 +1,187 @@
+<script>
+// 1. WORST-CASE COMPLEXITY     //
 
+function hasDuplicates(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = 0; j < arr.length; j++) {
+      if (i !== j && arr[i] === arr[j]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/*
+Worst-case complexity:
+- Outer loop runs n times
+- Inner loop runs n times
+
+=> O(n²) time
+=> O(1) extra space
+*/
+
+console.log("hasDuplicates([1,2,3,1]) =", hasDuplicates([1,2,3,1]));
+console.log("hasDuplicates([1,2,3,4]) =", hasDuplicates([1,2,3,4]));
+
+
+// 2. FASTER VERSION (O(n))     //
+
+function hasDuplicatesFast(arr) {
+  var seen = {};
+  for (var i = 0; i < arr.length; i++) {
+    if (seen[arr[i]]) {
+      return true;
+    }
+    seen[arr[i]] = true;
+  }
+  return false;
+}
+/*
+Time complexity:  O(n)
+Space complexity: O(n)
+*/
+
+console.log("hasDuplicatesFast([1,2,3,1]) =", hasDuplicatesFast([1,2,3,1]));
+console.log("hasDuplicatesFast([1,2,3,4]) =", hasDuplicatesFast([1,2,3,4]));
+
+
+// 3. GREEDY TSP IMPLEMENTATION //
+
+function Graph() {
+  this.vertices = [];
+  this.edges = {};
+}
+
+Graph.prototype.addVertex = function(name) {
+  if (!this.edges[name]) {
+    this.vertices.push(name);
+    this.edges[name] = {};
+  }
+};
+
+Graph.prototype.addEdge = function(u, v, weight) {
+  this.edges[u][v] = weight;
+  this.edges[v][u] = weight; // symmetric graph
+};
+
+Graph.prototype.getDistance = function(u, v) {
+  return this.edges[u][v];
+};
+
+Graph.prototype.getNeighbors = function(u) {
+  return Object.keys(this.edges[u]);
+};
+
+// build small symmetric TSP graph
+var tsp = new Graph();
+["A","B","C","D","E"].forEach(c => tsp.addVertex(c));
+
+tsp.addEdge("A","B",10);
+tsp.addEdge("A","C",8);
+tsp.addEdge("A","D",9);
+tsp.addEdge("A","E",7);
+
+tsp.addEdge("B","C",10);
+tsp.addEdge("B","D",5);
+tsp.addEdge("B","E",6);
+
+tsp.addEdge("C","D",8);
+tsp.addEdge("C","E",9);
+
+tsp.addEdge("D","E",6);
+
+function greedyTSP(graph, start) {
+  var visited = {};
+  var path = [start];
+  visited[start] = true;
+  var total = 0;
+
+  while (path.length < graph.vertices.length) {
+    var current = path[path.length - 1];
+    var neighbors = graph.getNeighbors(current);
+    var best = null;
+    var bestDist = Infinity;
+
+    neighbors.forEach(n => {
+      if (!visited[n]) {
+        var d = graph.getDistance(current, n);
+        if (d < bestDist) {
+          bestDist = d;
+          best = n;
+        }
+      }
+    });
+
+    if (!best) break;
+
+    path.push(best);
+    visited[best] = true;
+    total += bestDist;
+  }
+
+  total += graph.getDistance(path[path.length - 1], start);
+  path.push(start);
+
+  return { path, distance: total };
+}
+
+console.log("\nGreedy TSP result:");
+var greedy = greedyTSP(tsp, "A");
+console.log("Path:", greedy.path.join(" -> "));
+console.log("Distance:", greedy.distance);
+
+
+// 4. INTERSECTING RECTANGLES   //
+
+function Rectangle(x1, y1, x2, y2) {
+  this.x1 = x1; this.y1 = y1;
+  this.x2 = x2; this.y2 = y2;
+}
+
+Rectangle.prototype.intersects = function(other) {
+  if (this.x2 < other.x1 || other.x2 < this.x1) return false;
+  if (this.y2 < other.y1 || other.y2 < this.y1) return false;
+  return true;
+};
+
+Rectangle.prototype.isInside = function(other) {
+  return (this.x1 >= other.x1 &&
+          this.y1 >= other.y1 &&
+          this.x2 <= other.x2 &&
+          this.y2 <= other.y2);
+};
+
+function findIntersectingRectangles(rects) {
+  var results = [];
+  for (var i = 0; i < rects.length; i++) {
+    for (var j = i + 1; j < rects.length; j++) {
+      if (rects[i].intersects(rects[j])) {
+        results.push({i, j});
+      }
+    }
+  }
+  return results;
+}
+
+/*
+Time complexity:
+Checking all pairs of N rectangles → O(N²)
+*/
+
+console.log("\nRectangle Intersections:");
+
+var rects = [
+  new Rectangle(0,0,3,3),
+  new Rectangle(2,2,5,5),
+  new Rectangle(5,5,7,7),
+  new Rectangle(-1,-1,1,1)
+];
+
+var pairs = findIntersectingRectangles(rects);
+pairs.forEach(p => console.log("Rectangle", p.i, "intersects with", p.j));
+
+console.log("Is rect0 inside rect1?", rects[0].isInside(rects[1]));
+console.log("Is rect3 inside rect0?", rects[3].isInside(rects[0]));
+
+</script>
