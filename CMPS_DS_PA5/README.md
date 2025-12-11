@@ -5,3 +5,4 @@ module-5.js – all code for the BST, Graph, and Dijkstra algorithm.
 Binary Search Tree (insert, search, remove, min, max, traversals)
 Graph (addVertex, addEdge, BFS, DFS)
 Dijkstra’s shortest path algorithm
+Live page: http://mgajic.it.pointpark.edu/module5/pa/
