@@ -1,1 +1,88 @@
+<script>
+// Big O notation //
 
+/*
+  isPalindrome(str)
+
+  BEST CASE: O(1)
+  WORST CASE: O(n)
+  AVERAGE CASE: O(n)
+  SPACE: O(1)
+*/
+
+function isPalindrome(str) {
+  for (var i = 0; i < str.length / 2; i++) {
+    if (str[i] !== str[str.length - i - 1]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+console.log("isPalindrome('racecar') =", isPalindrome("racecar"));
+console.log("isPalindrome('apple') =", isPalindrome("apple"));
+
+
+// Min Stack – getMin() in O(1) time           //
+
+function MinStack() {
+  this.data = [];
+  this.minData = [];
+
+  this.push = function(value) {
+    this.data.push(value);
+    if (this.minData.length === 0) {
+      this.minData.push(value);
+    } else {
+      var currentMin = this.minData[this.minData.length - 1];
+      this.minData.push(Math.min(value, currentMin));
+    }
+  };
+
+  this.pop = function() {
+    if (this.data.length === 0) return undefined;
+    this.minData.pop();
+    return this.data.pop();
+  };
+
+  this.getMin = function() {
+    if (this.minData.length === 0) return undefined;
+    return this.minData[this.minData.length - 1];
+  };
+}
+
+console.log("\nTesting MinStack:");
+var s = new MinStack();
+s.push(5); console.log(s.getMin());
+s.push(3); console.log(s.getMin());
+s.push(7); console.log(s.getMin());
+s.push(2); console.log(s.getMin());
+s.pop();   console.log(s.getMin());
+
+
+// Euler Problem 1 and 2         //
+
+function eulerProblem1(limit) {
+  var sum = 0;
+  for (var i = 0; i < limit; i++) {
+    if (i % 3 === 0 || i % 5 === 0) sum += i;
+  }
+  return sum;
+}
+
+console.log("\nEuler Problem 1 =", eulerProblem1(1000));
+
+
+function eulerProblem2(limit) {
+  var a = 1, b = 2, sum = 0;
+  while (a <= limit) {
+    if (a % 2 === 0) sum += a;
+    var next = a + b;
+    a = b;
+    b = next;
+  }
+  return sum;
+}
+
+console.log("Euler Problem 2 =", eulerProblem2(4000000));
+</script>
